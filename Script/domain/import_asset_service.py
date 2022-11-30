@@ -1,6 +1,5 @@
 from infrastructure.configuration.path_manager import PathManager
 from infrastructure.utils.file_extension_helper import FileExtensionHelper
-from infrastructure.utils.unreal_extensions import AssetImportTypeEnum, ImportAssetStruct, ImportedAssetData
 import unreal
 from typing import Protocol
 from abc import abstractmethod
@@ -13,15 +12,15 @@ class ImportAssetService():
         self.editorAssetLibrary = _editorAssetLibrary
 
     def create_meshes(self, files):
-        return ImportAssetFactory.get_importer(AssetImportTypeEnum.Meshes).create_tasks_from_files(files)
+        return ImportAssetFactory.get_importer(unreal.AssetImportTypeEnum.MESHES).create_tasks_from_files(files)
 
     def create_sounds(self, files):
-        return ImportAssetFactory.get_importer(AssetImportTypeEnum.Sounds).create_tasks_from_files(files)
+        return ImportAssetFactory.get_importer(unreal.AssetImportTypeEnum.SOUNDS).create_tasks_from_files(files)
 
     def create_textures(self, files):
-        return ImportAssetFactory.get_importer(AssetImportTypeEnum.Textures).create_tasks_from_files(files)
+        return ImportAssetFactory.get_importer(unreal.AssetImportTypeEnum.TEXTURES).create_tasks_from_files(files)
 
-    def preview_assets(self, importAssetDto: ImportAssetStruct) -> unreal.Array(ImportedAssetData):
+    def preview_assets(self, importAssetDto: unreal.ImportAssetStruct) -> unreal.Array(unreal.ImportedAssetData):
         files = FileProcessor().get_files_with_extensions_from_folder(importAssetDto.asset_path, FileExtensionHelper.get_file_formats_to_import(include_meshes=importAssetDto.import_meshes, include_sounds=importAssetDto.import_sounds, include_textures=importAssetDto.import_textures))
         return files
 
@@ -59,7 +58,7 @@ class ImportAssetBase(Protocol):
         if not unreal.Paths.directory_exists(destination_path):
             unreal.EditorAssetLibrary.make_directory(destination_path)
 
-            file: ImportedAssetData
+            file: unreal.ImportedAssetData
             for file in files:
                 tasks.append(self.build_import_task(filename=file.asset_path, destination_path=file.asset_destination))
 
@@ -67,7 +66,7 @@ class ImportAssetBase(Protocol):
 
 class MeshImporter(ImportAssetBase):
     def get_import_asset_enum(self):
-        return AssetImportTypeEnum.Meshes
+        return unreal.AssetImportTypeEnum.MESHES
 
     def get_destination_folder(self):
         return PathManager.get_mesh_destination_folder()
@@ -83,39 +82,39 @@ class MeshImporter(ImportAssetBase):
 
 class SoundImporter(ImportAssetBase):
     def get_import_asset_enum(self):
-        return AssetImportTypeEnum.Sounds
+        return unreal.AssetImportTypeEnum.SOUNDS
 
     def get_destination_folder(self):
         return PathManager.get_sound_destination_folder()
 
 class TextureImporter(ImportAssetBase):
     def get_import_asset_enum(self):
-        return AssetImportTypeEnum.Textures
+        return unreal.AssetImportTypeEnum.TEXTURES
 
     def get_destination_folder(self):
         return PathManager.get_texture_destination_folder()
 
 class ImportAssetFactory():
     FACTORIES = {
-        AssetImportTypeEnum.Meshes: MeshImporter(),
-        AssetImportTypeEnum.Sounds: SoundImporter(),
-        AssetImportTypeEnum.Textures: TextureImporter()
+        unreal.AssetImportTypeEnum.MESHES: MeshImporter(),
+        unreal.AssetImportTypeEnum.SOUNDS: SoundImporter(),
+        unreal.AssetImportTypeEnum.TEXTURES: TextureImporter()
     }
 
     @staticmethod
-    def get_importer(type: AssetImportTypeEnum) -> ImportAssetBase:
+    def get_importer(type: unreal.AssetImportTypeEnum) -> ImportAssetBase:
         return ImportAssetFactory.FACTORIES[type]
 
 class FileProcessor():
-    def get_files_with_extensions_from_folder(self, asset_path: str, extensions) -> unreal.Array(ImportedAssetData):
-        files = unreal.Array(ImportedAssetData)
+    def get_files_with_extensions_from_folder(self, asset_path: str, extensions) -> unreal.Array(unreal.ImportedAssetData):
+        files = unreal.Array(unreal.ImportedAssetData)
 
         # r=root, d=directories, f = files
         for r, d, f in os.walk(asset_path):
             for file in f:
                 for extension in extensions:
                     if re.search('.' + extension, file, re.IGNORECASE):
-                        newFile = ImportedAssetData()
+                        newFile = unreal.ImportedAssetData()
                         newFile.asset_extension = extension
                         newFile.asset_path = os.path.join(r, file)
                         newFile.asset_name = file

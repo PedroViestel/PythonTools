@@ -1,6 +1,5 @@
 # from infrastructure.cross_cutting.package_solver import PackageSolver
 # PackageSolver.install_missing_packages()
-from infrastructure.utils.unreal_extensions import ImportedAssetData
 import unreal
 from infrastructure.configuration.request import *
 from infrastructure.cross_cutting.bootstrapper import Bootstrapper
@@ -93,13 +92,14 @@ class PythonExposedClass(unreal.BlueprintFunctionLibrary):
     def log_skel_mesh_missing_physics_asset():
         mediator.send(LogSkelkMeshMissingPhysicsAssetRequest())
 
-    @unreal.ufunction(static=True, params=[ImportAssetStruct], ret=unreal.Array(ImportedAssetData))
-    def preview_assets(importAssetDto: ImportAssetStruct):
+    @unreal.ufunction(static=True, params=[unreal.ImportAssetStruct], ret=unreal.Array(unreal.ImportedAssetData))
+    def preview_assets(importAssetDto: unreal.ImportAssetStruct):
         result = mediator.send(ImportAssetRequest(dto=importAssetDto))
+        unreal.log_warning(result)
         return result
 
-    @unreal.ufunction(static=True, params=[unreal.Array(ImportedAssetData)])
-    def import_assets(assetsToImport: unreal.Array(ImportedAssetData)):
+    @unreal.ufunction(static=True, params=[unreal.Array(unreal.ImportedAssetData)])
+    def import_assets(assetsToImport: unreal.Array(unreal.ImportedAssetData)):
         with unreal.ScopedEditorTransaction("Import Assets"):
             result = mediator.send(AssetsSelectedRequest(assetsToImport=assetsToImport))
             return result

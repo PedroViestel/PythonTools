@@ -79,3 +79,7 @@ DerivedDataCache/*
 __pycahce__/*
 *.pyc
 Script/infrastructure/configuration/PythonLog.txt
+
+
+#Rider
+.idea/

@@ -1,4 +1,3 @@
-from infrastructure.utils.unreal_extensions import ImportAssetStruct, ImportedAssetData
 import unreal
 
 class LogEmptyFoldersRequest():
@@ -65,10 +64,10 @@ class LogStaticMeshHasMultipleUvChannelsRequest():
         self.numOfChannelsToCheckFor = numOfChannelsToCheckFor
     pass
 class ImportAssetRequest():
-    def __init__(self, dto: ImportAssetStruct):
+    def __init__(self, dto: unreal.ImportAssetStruct):
         self.importAssetStruct = dto
     pass
 class AssetsSelectedRequest():
-    def __init__(self, assetsToImport: unreal.Array(ImportedAssetData)):
+    def __init__(self, assetsToImport: unreal.Array(unreal.ImportedAssetData)):
         self.assetsToImport = assetsToImport
     pass

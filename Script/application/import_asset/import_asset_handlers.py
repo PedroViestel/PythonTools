@@ -1,7 +1,6 @@
 from domain.import_asset_service import ImportAssetService
 from infrastructure.configuration.message import ImportedFilesMessage
 from infrastructure.logging.base_logging import BaseLogging
-from infrastructure.utils.unreal_extensions import AssetImportTypeEnum, ImportAssetStruct, ImportedAssetData
 import unreal
 
 class ImportAssetHandler:
@@ -9,21 +8,21 @@ class ImportAssetHandler:
         self.importAssetService = _importAssetService
         self.logging = _logging
 
-    def preview_assets(self, importAssetDto: ImportAssetStruct) -> unreal.Array(ImportedAssetData):
+    def preview_assets(self, importAssetDto: unreal.ImportAssetStruct) -> unreal.Array(unreal.ImportedAssetData):
         return self.importAssetService.preview_assets(importAssetDto)
 
-    def import_assets(self, assets: unreal.Array(ImportedAssetData)):
+    def import_assets(self, assets: unreal.Array(unreal.ImportedAssetData)):
         tasks = []
 
-        meshes = self.filter_by_import_type(assets, AssetImportTypeEnum.Meshes)
+        meshes = self.filter_by_import_type(assets, unreal.AssetImportTypeEnum.MESHES)
         if len(meshes) > 0:
             tasks.extend(self.importAssetService.create_meshes(meshes))
 
-        sounds = self.filter_by_import_type(assets, AssetImportTypeEnum.Sounds)
+        sounds = self.filter_by_import_type(assets, unreal.AssetImportTypeEnum.SOUNDS)
         if len(sounds) > 0:
             tasks.extend(self.importAssetService.create_sounds(sounds))
 
-        textures = self.filter_by_import_type(assets, AssetImportTypeEnum.Textures)
+        textures = self.filter_by_import_type(assets, unreal.AssetImportTypeEnum.TEXTURES)
         if len(textures) > 0:
             tasks.extend(self.importAssetService.create_textures(textures))
 
@@ -32,9 +31,9 @@ class ImportAssetHandler:
 
         self.logging.log(ImportedFilesMessage().build_log_summary(self.transform_tasks_into_log(tasks)))
 
-    def filter_by_import_type(self, assetsToImport: unreal.Array(ImportedAssetData), import_type: AssetImportTypeEnum):
+    def filter_by_import_type(self, assetsToImport: unreal.Array(unreal.ImportedAssetData), import_type: unreal.AssetImportTypeEnum):
         result = []
-        asset: ImportedAssetData
+        asset: unreal.ImportedAssetData
 
         for asset in assetsToImport:
             if asset.asset_type.value == import_type.value:

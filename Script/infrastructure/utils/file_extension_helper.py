@@ -1,19 +1,16 @@
-
-from infrastructure.utils.unreal_extensions import AssetImportTypeEnum
-
-
+import unreal
 class FileExtensionHelper():
     FILE_EXTENSIONS = {
-        AssetImportTypeEnum.Meshes: ['fbx', 'obj'],
-        AssetImportTypeEnum.Sounds: ['mp3', 'wma', 'aac', 'wav', 'flac'],
-        AssetImportTypeEnum.Textures: ['jpeg', 'jpg', 'png', 'tga']
+        unreal.AssetImportTypeEnum.MESHES: ['fbx', 'obj'],
+        unreal.AssetImportTypeEnum.SOUNDS: ['mp3', 'wma', 'aac', 'wav', 'flac'],
+        unreal.AssetImportTypeEnum.TEXTURES: ['jpeg', 'jpg', 'png', 'tga']
     }
 
     @staticmethod
     def get_file_formats_to_import(include_meshes: bool, include_sounds: bool, include_textures: bool):
-        return (FileExtensionHelper.FILE_EXTENSIONS[AssetImportTypeEnum.Meshes] if include_meshes else []) + \
-            (FileExtensionHelper.FILE_EXTENSIONS[AssetImportTypeEnum.Sounds] if include_sounds else []) + \
-            (FileExtensionHelper.FILE_EXTENSIONS[AssetImportTypeEnum.Textures] if include_textures else [])
+        return (FileExtensionHelper.FILE_EXTENSIONS[unreal.AssetImportTypeEnum.MESHES] if include_meshes else []) + \
+            (FileExtensionHelper.FILE_EXTENSIONS[unreal.AssetImportTypeEnum.SOUNDS] if include_sounds else []) + \
+            (FileExtensionHelper.FILE_EXTENSIONS[unreal.AssetImportTypeEnum.TEXTURES] if include_textures else [])
 
     @staticmethod
     def get_enum_with_extension(extension):
